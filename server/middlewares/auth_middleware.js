@@ -1,5 +1,6 @@
 const User = require("../models/user_model");
-const { parseToken } = require("../utils/jwt_util");
+
+const { parseUtil } = require("../utils/jwt_util");
 
 const isLoggedIn = async (req, res, next) => {
     if (!req.headers.authorization)
@@ -14,20 +15,24 @@ const isLoggedIn = async (req, res, next) => {
         return res.status(401).json({ error: "Authorization token is required" });
 
     try {
-        const data = parseToken(req);
+        const data = parseUtil(req);
+
         const user = await User.findById(data.id);
 
         if (!user)
             return res.status(400).json({ error: "User not found" });
 
-        req.user = user;
+        const userObj = user.toObject();
+        delete userObj["password"];
+
+        req.user = userObj;
         req.token = token
 
         next();
-    } catch (error) {
-        if (error.name === 'TokenExpiredError')
-            return res.status(401).json({ error: "Token expired" });
 
+    } catch (err) {
+        if (err.name === 'TokenExpiredError')
+            return res.status(401).json({ error: "Token expired" });
         return res.status(401).json({ error: "Invalid token" });
     }
 };

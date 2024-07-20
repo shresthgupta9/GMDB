@@ -1,10 +1,14 @@
 const router = require("express").Router();
 const { body, header } = require("express-validator");
 
-// const isLoggedIn = require("../middlewares/auth_middleware");
 const validateInputUtil = require("../utils/validateinput_util");
+
 const { registerController, verifyController } = require("../controllers/register_controller");
 const loginController = require("../controllers/login_controller");
+const { getProfileController } = require("../controllers/profile_controller");
+
+const { isLoggedIn } = require("../middlewares/auth_middleware");
+
 
 router.post(
     "/register",
@@ -37,10 +41,15 @@ router.post(
     loginController
 );
 
-// router.get("/logout", isLoggedIn, logoutUser);
-
-// router.get("/profile", isLoggedIn, getProfile);
+router.get("/profile", isLoggedIn, getProfileController);
 
 // router.put("/profile", isLoggedIn, updateProfile);
+
+// router.get(
+//     "/logout",
+//     isLoggedIn,
+//     logoutUser
+// );
+
 
 module.exports = router;
