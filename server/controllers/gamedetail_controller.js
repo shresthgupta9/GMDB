@@ -10,15 +10,19 @@ const gameDetailController = async (req, res, next) => {
         const mainGuid = req.params.guid;
 
         const mainGame = await Game.findOne({ guid: mainGuid }).populate("franchises", "name id guid url").populate("similar_games", "name id guid url").exec();
-        if (mainGame?.deck !== "null")
+        if (mainGame && mainGame.deck !== "null")
             return res.status(200).json({ message: "Game data fetched successfully", data: mainGame });
         else {
             const apicall = `https://www.giantbomb.com/api/game/${mainGuid}/?api_key=${apikey}&format=json&field_list=name,deck,expected_release_day,expected_release_month,expected_release_year,guid,id,original_game_rating,original_release_date,platforms,developers,franchises,genres,publishers,dlcs,similar_games,themes,image`;
-            const data = await axios.get(apicall).then(response => response.data.results);
+            const doc = await axios.get(apicall).then(response => response.data);
+            const statusCode = doc.status_code;
+            if (statusCode !== 1)
+                return res.status(400).json({ error: "Error fetching game details" });
+            const data = doc.results;
 
             const gameData = {
                 name: data.name,
-                url: `/game/${data.guid}`,
+                url: `/game/guid/${data.guid}`,
                 deck: data.deck,
                 expected_release_day: data.expected_release_day,
                 expected_release_month: data.expected_release_month,
@@ -50,7 +54,7 @@ const gameDetailController = async (req, res, next) => {
                 if (cnt > 0)
                     franchise = await Franchise.findOne({ guid });
                 else
-                    franchise = await Franchise.create({ name: f.name, id: f.id, guid, url: `/franchise/${guid}` });
+                    franchise = await Franchise.create({ name: f.name, id: f.id, guid, url: `/franchise/guid/${guid}` });
 
                 franchiseArr.push(franchise);
             }
@@ -71,7 +75,7 @@ const gameDetailController = async (req, res, next) => {
                 if (cnt > 0)
                     game = await Game.findOne({ guid });
                 else
-                    game = await Game.create({ name: g.name, id: g.id, guid, url: `/game/${guid}` });
+                    game = await Game.create({ name: g.name, id: g.id, guid, url: `/game/guid/${guid}` });
 
                 similarGamesArr.push(game);
             }

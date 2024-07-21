@@ -8,7 +8,7 @@ const franchiseSchema = new Schema({
     games: [{ type: Schema.Types.ObjectId, ref: "Game" }],
     guid: { type: String, required: true },
     id: { type: Number, required: true },
-    image: [{ type: String }],
+    poster: { type: String },
 }, { timestamps: true });
 
 const Franchise = mongoose.model("Franchise", franchiseSchema);

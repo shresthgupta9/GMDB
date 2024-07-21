@@ -1,7 +1,5 @@
 const User = require("../models/user_model");
 
-const { parseUtil } = require("../utils/jwt_util");
-
 const getProfileController = async (req, res, next) => {
     try {
         const profile = { ...req.user }; // create a shallow copy
