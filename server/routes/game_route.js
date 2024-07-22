@@ -3,6 +3,8 @@ const { check } = require("express-validator");
 
 const gameDetailController = require("../controllers/gamedetail_controller");
 const gameSearchController = require("../controllers/gamesearch_controller");
+const { addPlaylistController, delPlaylistController } = require("../controllers/playlist_controller");
+const { addCompletedListController, delCompletedListController } = require("../controllers/completedlist_controller");
 
 const validateInputUtil = require("../utils/validateinput_util");
 
@@ -20,6 +22,26 @@ router.get("/search",
     ],
     validateInputUtil,
     gameSearchController
-)
+);
+
+router.post("/playlist",
+    isLoggedIn,
+    addPlaylistController
+);
+
+router.delete("/playlist",
+    isLoggedIn,
+    delPlaylistController
+);
+
+router.post("/completedlist",
+    isLoggedIn,
+    addCompletedListController
+);
+
+router.delete("/completedlist",
+    isLoggedIn,
+    delCompletedListController
+);
 
 module.exports = router;

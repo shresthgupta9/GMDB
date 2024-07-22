@@ -30,19 +30,20 @@ const gameDetailController = async (req, res, next) => {
                 guid: data.guid,
                 id: data.id,
                 poster: data.image.small_url,
-                original_game_rating: data.original_game_rating.map(rating => rating.name),
+                original_game_rating: data.original_game_rating?.map(rating => rating.name),
                 original_release_date: data.original_release_date,
-                platforms: data.platforms.map(platform => platform.name),
+                platforms: data.platforms?.map(platform => platform.name),
                 developers: data.developers.map(developer => developer.name),
                 genres: data.genres.map(genre => genre.name),
                 publishers: data.publishers.map(publisher => publisher.name),
-                dlcs: data?.dlcs?.length > 0 ? [...new Set(data.dlcs.map(dlc => dlc.name))] : "",
+                // dlcs: data?.dlcs?.length > 0 ? [...new Set(data.dlcs?.map(dlc => dlc.name))] : "",
+                dlcs: [...new Set(data.dlcs?.map(dlc => dlc.name))],
                 themes: data.themes.map(theme => theme.name)
             }
 
             // filling franchises in .franchises
             let franchiseArr = [];
-            for (let i = 0; i < data.franchises.length; i++) {
+            for (let i = 0; i < data.franchises?.length; i++) {
                 const f = data.franchises[i];
 
                 const arr = f.api_detail_url.split("/");
@@ -63,7 +64,7 @@ const gameDetailController = async (req, res, next) => {
 
             // filling games in .similar_games
             let similarGamesArr = [];
-            for (let i = 0; i < data.similar_games.length; i++) {
+            for (let i = 0; i < data.similar_games?.length; i++) {
                 const g = data.similar_games[i];
 
                 const arr = g.api_detail_url.split("/");

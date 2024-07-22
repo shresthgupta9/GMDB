@@ -6,6 +6,7 @@ const validateInputUtil = require("../utils/validateinput_util");
 const { registerController, verifyController } = require("../controllers/register_controller");
 const loginController = require("../controllers/login_controller");
 const { getProfileController } = require("../controllers/profile_controller");
+const { forgotPassOtp, forgotPassVerify } = require("../controllers/forgotpass_controller");
 
 const { isLoggedIn } = require("../middlewares/auth_middleware");
 
@@ -39,6 +40,26 @@ router.post(
     ],
     validateInputUtil,
     loginController
+);
+
+router.post(
+    "/forgot_otp",
+    [
+        check("email", "Please provide an email").trim(), isEmail(),
+        body("password", "Please provide a password").isLength({ min: 8 }),
+        body("retype_password", "Passwords must be same").isLength({ min: 8 })
+    ],
+    validateInputUtil,
+    forgotPassOtp
+);
+
+router.post(
+    "/forgot_verify",
+    [
+        body("otp", "Invalid OTP").isLength({ min: 6, max: 6 }),
+    ],
+    validateInputUtil,
+    forgotPassVerify
 );
 
 router.get("/profile", isLoggedIn, getProfileController);

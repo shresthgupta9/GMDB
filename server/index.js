@@ -12,10 +12,12 @@ app.use(require("cors")());
 const userRoute = require("./routes/user_route");
 const gameRoute = require("./routes/game_route");
 const franchiseRoute = require("./routes/franchise_route");
+const homeRoute = require("./routes/home_route");
 
 app.use("/user", userRoute);
 app.use("/game", gameRoute);
 app.use("/franchise", franchiseRoute);
+app.use("/home", homeRoute);
 
 app.all('*', (req, res, next) => {
     return res.status(404).json({ message: `Can't find ${req.url} on the server` })
