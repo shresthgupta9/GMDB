@@ -8,7 +8,7 @@ const getProfileController = async (req, res, next) => {
         delete profile.createdAt;
         delete profile.__v;
 
-        console.log(req.user);
+        // console.log(req.user);
 
         return res.json(profile);
 

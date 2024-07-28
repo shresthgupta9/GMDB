@@ -9,5 +9,4 @@ router.get("/",
     homepageController
 );
 
-
 module.exports = router;

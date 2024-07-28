@@ -3,8 +3,8 @@ const { check } = require("express-validator");
 
 const gameDetailController = require("../controllers/gamedetail_controller");
 const gameSearchController = require("../controllers/gamesearch_controller");
-const { addPlaylistController, delPlaylistController } = require("../controllers/playlist_controller");
-const { addCompletedListController, delCompletedListController } = require("../controllers/completedlist_controller");
+const { addPlaylistController, delPlaylistController, showPlaylistController } = require("../controllers/playlist_controller");
+const { addCompletedListController, delCompletedListController, showCompletedListController } = require("../controllers/completedlist_controller");
 
 const validateInputUtil = require("../utils/validateinput_util");
 
@@ -24,6 +24,12 @@ router.get("/search",
     gameSearchController
 );
 
+// playlist
+router.get("/playlist",
+    isLoggedIn,
+    showPlaylistController
+)
+
 router.post("/playlist",
     isLoggedIn,
     addPlaylistController
@@ -33,6 +39,12 @@ router.delete("/playlist",
     isLoggedIn,
     delPlaylistController
 );
+
+// completed list
+router.get("/completedlist",
+    isLoggedIn,
+    showCompletedListController
+)
 
 router.post("/completedlist",
     isLoggedIn,

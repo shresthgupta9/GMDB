@@ -14,9 +14,9 @@ const { isLoggedIn } = require("../middlewares/auth_middleware");
 router.post(
     "/register",
     [
-        body("name", "Name is required").isString(),
+        body("name", "Name must be between 8 and 15 characters").isString().isLength({ min: 8, max: 15 }),
         body("email", "Email is required").trim().isEmail(),
-        body("password", "Password should be atleast 8 characters").isLength({ min: 8 }),
+        body("password", "Password must be between 8 and 15 characters").isLength({ min: 8, max: 15 }),
     ],
     validateInputUtil,
     registerController
@@ -45,7 +45,7 @@ router.post(
 router.post(
     "/forgot_otp",
     [
-        check("email", "Please provide an email").trim(), isEmail(),
+        body("email", "Please provide an email").trim().isEmail(),
         body("password", "Please provide a password").isLength({ min: 8 }),
         body("retype_password", "Passwords must be same").isLength({ min: 8 })
     ],

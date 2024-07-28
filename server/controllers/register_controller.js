@@ -11,7 +11,7 @@ const registerController = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (user)
-            return res.status(400).json({ message: "Email already exists" });
+            return res.status(400).json({ error: "Email already exists" });
 
         let otp = Math.floor(100000 + Math.random() * 900000);
         mailerUtil({
@@ -53,8 +53,7 @@ const verifyController = async (req, res, next) => {
         await User.create({ name, email, password: hashedPassword });
 
         return res.status(200).json({
-            message: "Account created successfully",
-            data: {}
+            message: "Account created successfully"
         })
 
     } catch (err) {
