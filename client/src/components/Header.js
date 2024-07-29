@@ -23,6 +23,8 @@ const Header = () => {
             navigate("/home");
         else
             navigate(`/search?q=${searchInput}`);
+
+        setSearchInput("");
     };
 
 
@@ -63,7 +65,7 @@ const Header = () => {
     return (
         <header className='fixed top-0 w-full h-16 bg-black bg-opacity-60 z-40 backdrop-blur-sm'>
             <div className='container mx-auto px-3 flex items-center h-full'>
-                <Link to={"/"}>
+                <Link to={"/home"}>
                     <img src={logo} alt='logo' width={70} />
                 </Link>
 
@@ -111,7 +113,7 @@ const Header = () => {
                                             className='px-4 py-2 hover:bg-gray-600 cursor-pointer'
                                         // onClick={() => handleResultClick(result)}
                                         >
-                                            <Link to={result.url}>{result.name}</Link>
+                                            <Link to={result.url} onClick={() => setSearchInput("")} >{result.name}</Link>
                                         </li>
                                     ))
                                 }

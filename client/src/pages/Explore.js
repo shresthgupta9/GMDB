@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
+
 import Card from '../components/Card';
 
+import Unauthorized from "./Unauthorized";
+
 const Explore = () => {
-    const params = useParams();
+    const location = useLocation();
 
     const [pageNo, setPageNo] = useState(1);
     const [data, setData] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
+    const [isUnauthorized, setIsUnauthorized] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
 
-    const field = params.explore === "playlist" ? "toPlay" : "finished";
-
-    // console.log("params", params.explore);
+    // const field = location.pathname.slice(1) === "playlist" ? "toPlay" : "finished";
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`/game/${params.explore}`, {
+            const response = await axios.get(`/game/${location.pathname.slice(1)}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -38,7 +41,10 @@ const Explore = () => {
             // console.log(response.data.data.totalPages);
 
         } catch (err) {
-            console.log(err);
+            if (err?.response?.status === 401)
+                setIsUnauthorized(true);
+
+            console.log("Explore Error", err);
         }
     };
 
@@ -48,37 +54,62 @@ const Explore = () => {
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, [pageNo]);
+    // useEffect(() => {
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => window.removeEventListener("scroll", handleScroll);
+    // }, []);
+
+    // useEffect(() => {
+    //     fetchData();
+    // }, [pageNo, location?.pathname]);
+
+    // useEffect(() => {
+    //     setPageNo(1);
+    //     setData([]);
+    // }, [location?.pathname]);
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (shouldFetch) {
+            fetchData();
+            setShouldFetch(false);
+        }
+    }, [shouldFetch, fetchData]);
 
     useEffect(() => {
         setPageNo(1);
         setData([]);
-        fetchData();
-    }, [params.explore]);
+        setShouldFetch(true);
+    }, [location?.pathname]);
+
+    useEffect(() => {
+        if (pageNo > 1) {
+            setShouldFetch(true);
+        }
+    }, [pageNo]);
 
     return (
-        <div className='py-16'>
-            <div className='container mx-auto'>
-                <h3 className='capitalize text-lg lg:text-xl font-semibold my-3'>Your {params.explore}</h3>
+        isUnauthorized ? <Unauthorized /> :
+            <div className='py-16'>
+                <div className='container mx-auto'>
+                    <h3 className='text-lg lg:text-3xl font-semibold my-5'>Your {location.pathname.slice(1) === "playlist" ? "Playlist" : "Completed List"}</h3>
 
-                <div className='grid grid-cols-[repeat(auto-fit,230px)] gap-6 justify-center lg:justify-start'>
-                    {
-                        data.map((exploreData, index) => {
-                            return (
-                                <Card data={exploreData} key={exploreData.id + index} />
-                            )
-                        })
-                    }
+                    <div className='grid grid-cols-[repeat(auto-fit,230px)] gap-6 justify-center lg:justify-start'>
+                        {
+                            data.map((exploreData, index) => {
+                                return (
+                                    <Card data={exploreData} key={exploreData.id + index} />
+                                )
+                            })
+                        }
+                    </div>
+
                 </div>
-
             </div>
-        </div>
     )
 }
 

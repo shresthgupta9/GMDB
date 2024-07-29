@@ -11,6 +11,8 @@ const Game = () => {
     const params = useParams();
 
     const [data, setData] = useState({});
+    const [playing, setPlaying] = useState(false);
+    const [completed, setCompleted] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -24,24 +26,112 @@ const Game = () => {
             });
 
             setData(response.data.data);
-            console.log(response.data.data);
+            setPlaying(response.data.data.isPlaying);
+            setCompleted(response.data.data.isCompleted);
 
+            console.log(response.data.data);
 
         } catch (err) {
             console.log("Search Error", err);
         }
     };
 
+    const changePlaylist = async () => {
+        try {
+            if (!playing) {
+                const response = await axios.post("/game/playlist",
+                    { gameId: data._id },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                );
+
+                // console.log(response);
+
+                if (response.status === 200) {
+                    setPlaying(true);
+                    setCompleted(false);
+                }
+
+            }
+            else {
+                const response = await axios.delete("/game/playlist", {
+                    data: { gameId: data._id },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+                );
+
+                // console.log(response);
+
+                if (response.status === 200) {
+                    setPlaying(false);
+                    setCompleted(false);
+                }
+            }
+        } catch (err) {
+            console.log("List error", err);
+        }
+    };
+
+    const changeCompletedlist = async () => {
+        try {
+            if (!completed) {
+                const response = await axios.post("/game/completedlist",
+                    { gameId: data._id },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                );
+
+                // console.log(respose);
+
+                if (response.status === 200) {
+                    setPlaying(false);
+                    setCompleted(true);
+                }
+
+            }
+            else {
+                const response = await axios.delete("/game/completedlist", {
+                    data: { gameId: data._id },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+                );
+
+                // console.log(response);
+
+                if (response.status === 200) {
+                    setPlaying(false);
+                    setCompleted(false);
+                }
+            }
+        } catch (err) {
+            console.log("List error", err);
+        }
+    };
+
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [params.id, fetchData])
 
     return (
         <div>
 
             <div className='w-full h-[280px] relative hidden lg:block'>
                 <div className='w-full h-full'>
-                    <img src={gameCover} className='h-full w-full object-cover' />
+                    <img src={gameCover} alt='game_cover' className='h-full w-full object-cover' />
                 </div>
 
                 <div className='absolute w-full h-full top-0 bg-gradient-to-t from-neutral-900 to-transparent'></div>
@@ -49,7 +139,9 @@ const Game = () => {
 
             <div className='container mx-auto px-3 py-2 lg:py-0 flex flex-col lg:flex-row gap-5 lg:gap-10'>
                 <div className='relative mx-auto lg:-mt-28 lg:mx-0 w-fit min-w-60'>
-                    <img src={data.poster} className='h-80 w-60 object-cover rounded' />
+                    <img src={data.poster} alt='poster' className='h-80 w-60 object-cover rounded' />
+                    <button onClick={changePlaylist} className={`mt-4 w-full py-2 text-center text-black rounded font-bold text-lg ${playing ? "bg-gradient-to-l from-red-500 to-orange-500" : "bg-white"} hover:scale-105 transition-all`}> Playlist </button>
+                    <button onClick={changeCompletedlist} className={`mt-4 w-full py-2 text-center text-black rounded font-bold text-lg ${completed ? "bg-gradient-to-l from-red-500 to-orange-500" : "bg-white"} hover:scale-105 transition-all`}> Completed </button>
                 </div>
 
                 <div>
@@ -171,44 +263,50 @@ const Game = () => {
             </div>
 
             <div>
-                <div className='container mx-auto px-3 my-10'>
-                    <h2 className='text-xl lg:text-2xl font-bold mb-5' >This game is part of the franchise</h2>
+                {
+                    data?.franchises?.length > 0 &&
+                    <div className='container mx-auto px-3 my-10'>
+                        <h2 className='text-xl lg:text-2xl font-bold mb-5' >This game is part of the franchise</h2>
 
-                    <div className='relative'>
-                        <div className='grid grid-cols-2 lg:grid-cols-5 gap-6 relative z-10'>
-                            {
-                                data?.franchises?.map((franchise, index) => {
-                                    return (
-                                        <Link to={franchise.url} className='w-full overflow-hidden block rounded relative hover:scale-105 transition-all'>
-                                            <h4 className='text-ellipsis line-clamp-1 text-md font-semibold'>{franchise.name}</h4>
-                                        </Link>
-                                    );
-                                })
-                            }
+                        <div className='relative'>
+                            <div className='grid grid-cols-2 lg:grid-cols-5 gap-6 relative z-10'>
+                                {
+                                    data?.franchises?.map((franchise, index) => {
+                                        return (
+                                            <Link to={franchise.url} key={index} className='w-full overflow-hidden block rounded relative hover:scale-105 transition-all'>
+                                                <h4 className='text-ellipsis line-clamp-1 text-md font-semibold'>{franchise.name}</h4>
+                                            </Link>
+                                        );
+                                    })
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
 
 
             <div>
-                <div className='container mx-auto px-3 my-10'>
-                    <h2 className='text-xl lg:text-2xl font-bold mb-5' >Similar Games</h2>
+                {
+                    data?.similar_games?.length > 0 &&
+                    <div className='container mx-auto px-3 my-10'>
+                        <h2 className='text-xl lg:text-2xl font-bold mb-5' >Similar Games</h2>
 
-                    <div className='relative'>
-                        <div className='grid grid-cols-2 lg:grid-cols-5 gap-6 relative z-10'>
-                            {
-                                data?.similar_games?.map((game, index) => {
-                                    return (
-                                        <Link to={game.url} className='w-full overflow-hidden block rounded relative hover:scale-105 transition-all'>
-                                            <h4 className='text-ellipsis line-clamp-1 text-md font-semibold'>{game.name}</h4>
-                                        </Link>
-                                    );
-                                })
-                            }
+                        <div className='relative'>
+                            <div className='grid grid-cols-2 lg:grid-cols-5 gap-6 relative z-10'>
+                                {
+                                    data?.similar_games?.map((game, index) => {
+                                        return (
+                                            <Link to={game.url} key={index} className='w-full overflow-hidden block rounded relative hover:scale-105 transition-all'>
+                                                <h4 className='text-ellipsis line-clamp-1 text-md font-semibold'>{game.name}</h4>
+                                            </Link>
+                                        );
+                                    })
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
 
             <div>

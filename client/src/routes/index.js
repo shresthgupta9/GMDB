@@ -6,6 +6,7 @@ import Home from "../pages/Home";
 import Explore from "../pages/Explore";
 import Search from "../pages/Search";
 import Game from "../pages/Game";
+import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter([
     {
@@ -33,12 +34,20 @@ const router = createBrowserRouter([
                 element: <Search />
             },
             {
-                path: ":explore",
+                path: "playlist",
+                element: <Explore />
+            },
+            {
+                path: "completedlist",
                 element: <Explore />
             },
             {
                 path: "game/guid/:id",
                 element: <Game />
+            },
+            {
+                path: "*",
+                element: <NotFound />
             },
         ]
     }
