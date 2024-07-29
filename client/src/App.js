@@ -14,11 +14,11 @@ function App() {
   return (
     <main className='pb-14 lg:pb-0'>
       {!isAuthPage && <Header />}
-      <div className='min-h-[92vh]'> {/*className={!isAuthPage && 'pt-16'}*/}
+      <div className='min-h-[92vh]'>
         < Outlet />
       </div>
       {!isAuthPage && <Footer />}
-      <MobileNavigation />
+      {!isAuthPage && <MobileNavigation />}
     </main >
   );
 }

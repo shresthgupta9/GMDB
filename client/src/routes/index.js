@@ -6,6 +6,7 @@ import Home from "../pages/Home";
 import Explore from "../pages/Explore";
 import Search from "../pages/Search";
 import Game from "../pages/Game";
+import Franchise from "../pages/Franchise";
 import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter([
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
             {
                 path: "game/guid/:id",
                 element: <Game />
+            },
+            {
+                path: "franchise/guid/:id",
+                element: <Franchise />
             },
             {
                 path: "*",

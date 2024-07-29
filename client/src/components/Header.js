@@ -102,7 +102,7 @@ const Header = () => {
 
                         {
                             searchInput.length > 0 &&
-                            <ul className='absolute w-full border border-gray-500 mt-2 bg-neutral-800'>
+                            <ul className='absolute w-full bg-opacity-90 rounded-lg mt-2 bg-neutral-800'>
                                 {loadingSearch
                                     ?
                                     <li className='px-4 py-2'>Loading...</li>
@@ -110,7 +110,7 @@ const Header = () => {
                                     searchResults.map((result) => (
                                         <li
                                             key={result.id}
-                                            className='px-4 py-2 hover:bg-gray-600 cursor-pointer'
+                                            className='px-4 py-2 hover:bg-neutral-600 cursor-pointer rounded'
                                         // onClick={() => handleResultClick(result)}
                                         >
                                             <Link to={result.url} onClick={() => setSearchInput("")} >{result.name}</Link>

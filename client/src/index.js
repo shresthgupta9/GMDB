@@ -8,6 +8,7 @@ import { RouterProvider } from 'react-router-dom';
 import router from './routes';
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
+// axios.defaults.baseURL = "http://192.168.10.104:5000";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -47,12 +47,12 @@ const gameDetailController = async (req, res, next) => {
                 original_game_rating: data.original_game_rating?.map(rating => rating.name),
                 original_release_date: data.original_release_date,
                 platforms: data.platforms?.map(platform => platform.name),
-                developers: data.developers.map(developer => developer.name),
-                genres: data.genres.map(genre => genre.name),
-                publishers: data.publishers.map(publisher => publisher.name),
+                developers: data?.developers?.map(developer => developer.name),
+                genres: data?.genres?.map(genre => genre.name),
+                publishers: data?.publishers?.map(publisher => publisher.name),
                 // dlcs: data?.dlcs?.length > 0 ? [...new Set(data.dlcs?.map(dlc => dlc.name))] : "",
                 dlcs: [...new Set(data.dlcs?.map(dlc => dlc.name))],
-                themes: data.themes.map(theme => theme.name)
+                themes: data?.themes?.map(theme => theme.name)
             }
 
             // filling franchises in .franchises

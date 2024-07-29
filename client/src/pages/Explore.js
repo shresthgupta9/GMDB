@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-
 import Card from '../components/Card';
-
 import Unauthorized from "./Unauthorized";
+
+import { BeatLoader } from "react-spinners";
 
 const Explore = () => {
     const location = useLocation();
@@ -13,12 +13,14 @@ const Explore = () => {
     const [data, setData] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
     const [isUnauthorized, setIsUnauthorized] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [shouldFetch, setShouldFetch] = useState(false);
 
     // const field = location.pathname.slice(1) === "playlist" ? "toPlay" : "finished";
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             const response = await axios.get(`/game/${location.pathname.slice(1)}`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,6 +47,8 @@ const Explore = () => {
                 setIsUnauthorized(true);
 
             console.log("Explore Error", err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -96,7 +100,7 @@ const Explore = () => {
         isUnauthorized ? <Unauthorized /> :
             <div className='py-16'>
                 <div className='container mx-auto'>
-                    <h3 className='text-lg lg:text-3xl font-semibold my-5'>Your {location.pathname.slice(1) === "playlist" ? "Playlist" : "Completed List"}</h3>
+                    <h3 className='text-lg lg:text-3xl font-semibold my-5 px-5'>Your {location.pathname.slice(1) === "playlist" ? "Playlist" : "Completed List"}</h3>
 
                     <div className='grid grid-cols-[repeat(auto-fit,230px)] gap-6 justify-center lg:justify-start'>
                         {
@@ -109,6 +113,17 @@ const Explore = () => {
                     </div>
 
                 </div>
+
+                {
+                    pageNo <= totalPage + 1 ?
+                        loading &&
+                        <div className='flex justify-center items-center mt-16'>
+                            <BeatLoader color="#ffffff" size={15} />
+                        </div>
+                        : <div></div>
+                }
+
+
             </div>
     )
 }
